@@ -22,6 +22,21 @@ META = ("/v1/compte", "/v1/credits", "/v1/provenance", "/v1/usage", "/v1/demo",
 LENTES = ("/v1/intelligence/", "/v1/rapport/", "/v1/kyb/batch")
 
 
+def prix_en_euros(brut):
+    """« $0.01 » devient « 0,01 EUR ».
+
+    Ce n est PAS une conversion : la grille facture le meme montant NUMERIQUE
+    en USDC, en EURC ou en credits, et un credit vaut un euro (voir la
+    description de notre OpenAPI). Un utilisateur d Odoo paie avec sa cle,
+    donc en credits : l euro est sa devise reelle. Afficher un dollar
+    l obligerait a se demander a quel taux, alors qu il n y en a pas.
+    """
+    if not brut:
+        return ""
+    montant = str(brut).lstrip("$").strip()
+    return montant.replace(".", ",") + "\u00a0\u20ac"
+
+
 def libelle(chemin, op):
     t = LIBELLES_FR.get(chemin) or op.get("summary") or chemin
     return re.sub(r"\s+", " ", t).strip()[:70]
@@ -44,7 +59,7 @@ for chemin, ops in SPEC["paths"].items():
         "chemin": chemin,
         "cle": params[0],
         "libelle": libelle(chemin, op),
-        "prix": op.get("x-price") or "",
+        "prix": prix_en_euros(op.get("x-price")),
     })
 
 routes.sort(key=lambda r: r["libelle"])
