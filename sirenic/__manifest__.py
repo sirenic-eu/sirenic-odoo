@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     # ⚠️ 25 caractères maximum, règle de la boutique Odoo. Celui-ci en fait 22.
-    "name": "Sirenic — KYB & risque",
+    "name": "Sirenic KYB & risque",
     "version": "19.0.1.0.0",
     "category": "Accounting/Accounting",
-    "summary": "Vérifier un fournisseur avant de le payer : registre, TVA, IBAN, "
-               "procédure collective, sanctions — France et Europe.",
+    "summary": "Verifier un fournisseur avant de le payer : registre officiel, TVA, IBAN, "
+               "procedure collective, sanctions. France et 12 pays d'Europe.",
     "author": "Sirenic",
     "website": "https://api.sirenic.eu",
     "license": "LGPL-3",
@@ -38,7 +38,7 @@
     # ─────────────────────────────────────────────────────────────────────
     "external_dependencies": {"python": ["requests"]},
     "description": """
-Sirenic — vérification d'entreprises françaises et européennes
+Sirenic, vérification d'entreprises françaises et européennes
 ==============================================================
 
 Ce module appelle un SERVICE EXTERNE : l'API Sirenic (https://api.sirenic.eu).

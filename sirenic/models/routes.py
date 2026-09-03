@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# FICHIER GÉNÉRÉ PAR generer-routes.py — NE PAS ÉDITER À LA MAIN.
+# FICHIER GÉNÉRÉ PAR generer-routes.py, NE PAS ÉDITER À LA MAIN.
 # Source : openapi.json de https://api.sirenic.eu, 21 routes retenues.
 #
 # Critère de sélection, appliqué par le générateur et non décrété ici :
-# une route entre si sa clé de chemin est un SIREN ou un SIRET seul — donc si
+# une route entre si sa clé de chemin est un SIREN ou un SIRET seul, donc si
 # elle a un geste évident sur une fiche partenaire Odoo. Les routes de compte
 # et celles dont la latence dépasse une action synchrone sont écartées.
 

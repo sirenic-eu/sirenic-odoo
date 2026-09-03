@@ -1,12 +1,12 @@
 # Sirenic pour Odoo
 
-Module Odoo 19 : vérifier un fournisseur avant de le payer — registre officiel,
-TVA, IBAN, procédure collective — pour la France et l'Europe.
+Module Odoo 19 : vérifier un fournisseur avant de le payer, registre officiel,
+TVA, IBAN, procédure collective, pour la France et l'Europe.
 
 ## Installation
 
 Copier `sirenic/` dans le dossier des addons, redémarrer Odoo, puis
-*Applications → Mettre à jour la liste* et installer **Sirenic — KYB & risque**.
+*Applications → Mettre à jour la liste* et installer **Sirenic KYB & risque**.
 
 ⚠️ **Odoo Online (SaaS) n'accepte aucun module tiers.** Ce module ne s'installe
 que sur **Odoo.sh** et en **on-premise**. Les utilisateurs d'Odoo Online passent
@@ -18,7 +18,7 @@ Odoo par son API externe.
 *Paramètres → Sirenic* : lire ce qui est transmis, cocher le consentement, et
 coller sa clé d'API (créée sur https://api.sirenic.eu/compte).
 
-Aucun appel n'est émis tant que le consentement n'est pas coché — la garde vit
+Aucun appel n'est émis tant que le consentement n'est pas coché, la garde vit
 dans `models/sirenic_client.py`, pas dans les vues, pour qu'une action planifiée
 ne puisse pas la contourner.
 
@@ -32,7 +32,7 @@ python3 generer-routes.py
 ```
 
 Le générateur ne retient que les routes dont la clé de chemin est un SIREN ou un
-SIRET seul — celles qui ont un geste évident sur une fiche partenaire — et
+SIRET seul, celles qui ont un geste évident sur une fiche partenaire, et
 écarte celles dont la latence dépasse une action synchrone.
 
 ## Contrôles
@@ -53,7 +53,7 @@ d'héritage, ni le comportement à l'exécution : ceux-là demandent une instanc
 
 `tester-mapping.py` s'appuie sur des réponses **réelles** de l'API, pas sur des
 fixtures écrites à la main : une fixture inventée encode l'hypothèse qu'on teste
-et ne peut que la confirmer. Ces réponses ne sont pas commitées — un dossier KYB
+et ne peut que la confirmer. Ces réponses ne sont pas commitées, un dossier KYB
 porte les noms des dirigeants, et les republier serait une publication nouvelle.
 
 ```bash
@@ -67,7 +67,7 @@ python3 tester-mapping.py
 
 ## Banc d'essai local (Odoo 19 réel)
 
-Le module a été chargé et exercé dans un vrai Odoo 19 — c'est là qu'ont été
+Le module a été chargé et exercé dans un vrai Odoo 19, c'est là qu'ont été
 trouvés les défauts que les contrôles statiques ne voient pas (`@fields.depends`
 au lieu de `@api.depends`, et le HTML du fil échappé faute de `Markup`).
 

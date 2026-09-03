@@ -30,7 +30,7 @@ class SirenicVerification(models.TransientModel):
 
     @staticmethod
     def _selection_routes():
-        return [(code, "%s  (%s)" % (r["libelle"], r["prix"] or "—"))
+        return [(code, "%s  (%s)" % (r["libelle"], r["prix"] or "-"))
                 for code, r in ROUTES.items()]
 
     @api.depends("route")
@@ -45,6 +45,6 @@ class SirenicVerification(models.TransientModel):
         # Trace datée dans le fil : une vérification sans trace ne prouve rien
         # le jour où il faut justifier une décision de paiement.
         self.partner_id.message_post(
-            body=_("Sirenic — %s (%s)", (ROUTES[self.route]["libelle"]), ROUTES[self.route]["prix"]))
+            body=_("Sirenic, %s (%s)", (ROUTES[self.route]["libelle"]), ROUTES[self.route]["prix"]))
         return {"type": "ir.actions.act_window", "res_model": self._name,
                 "res_id": self.id, "view_mode": "form", "target": "new"}

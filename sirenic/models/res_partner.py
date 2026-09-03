@@ -36,7 +36,7 @@ class ResPartner(models.Model):
         return re.sub(r"[^A-Z0-9]", "", (self.vat or "").upper())
 
     def _sirenic_siren(self):
-        """Le SIREN français, ou None — jamais une valeur devinée."""
+        """Le SIREN français, ou None, jamais une valeur devinée."""
         self.ensure_one()
         # Le champ SIRET n'existe que si la localisation française est
         # installée : ne pas le supposer présent.
@@ -80,7 +80,7 @@ class ResPartner(models.Model):
                     "numéro est possible."))
             if pays not in ("BE", "PL"):
                 corps = client.appeler("/v1/tva/verifier/%s" % self._sirenic_tva_normalisee())
-                return self._sirenic_afficher(corps, _("Numéro de TVA contrôlé au VIES SEULEMENT — "
+                return self._sirenic_afficher(corps, _("Numéro de TVA contrôlé au VIES SEULEMENT, "
                                                        "ni procédure collective, ni IBAN, ni identité au registre."))
             corps = client.appeler("/v1/eu/facturation/dossier", {"pays": pays, "id": ident})
         return self._sirenic_afficher(corps)
@@ -115,7 +115,7 @@ class ResPartner(models.Model):
         raisons = [r.get("code") for r in (verdict.get("raisons") or []) if r.get("niveau") == "bloquante"]
         titre = _("Sirenic : prêt à facturer") if pret else _("Sirenic : à ne pas payer en l'état")
         detail = ", ".join(raisons) if raisons else _("aucun motif bloquant")
-        message = "%s — %s" % (titre, detail)
+        message = "%s, %s" % (titre, detail)
         if avertissement:
             message = "%s\n%s" % (message, avertissement)
         self.message_post(body=message)
@@ -130,7 +130,7 @@ class ResPartner(models.Model):
         """Le dossier KYB, rendu LISIBLE dans le fil de discussion.
 
         Le JSON brut n'est pas un rapport : personne ne justifie une entrée en
-        relation en collant des accolades. Le fil sert de trace datée — c'est
+        relation en collant des accolades. Le fil sert de trace datée, c'est
         elle qu'on produira le jour où il faudra montrer ce qui avait été
         vérifié, et quand.
         """
@@ -144,7 +144,7 @@ class ResPartner(models.Model):
         corps = self.env["sirenic.client"].appeler("/v1/kyb/%s" % siren)
         # ⚠️ Markup, PAS une chaîne nue. Depuis Odoo 17, `message_post`
         # ÉCHAPPE tout str : le fil afficherait « &lt;div&gt;&lt;h4&gt;… », les
-        # balises en clair. Constaté au banc d'essai le 03/09/2026 — invisible
+        # balises en clair. Constaté au banc d'essai le 03/09/2026, invisible
         # à tout contrôle statique, et à l'œil nu seulement une fois le module
         # chargé dans un vrai Odoo.
         self.message_post(body=Markup(rapport_kyb_html(corps)))

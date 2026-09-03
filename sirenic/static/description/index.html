@@ -1,41 +1,59 @@
 <section class="oe_container">
   <div class="oe_row oe_spaced">
-    <h2 class="oe_slogan">Sirenic &#8212; v&#233;rifier un fournisseur avant de le payer</h2>
-    <h3 class="oe_slogan">Registre officiel, TVA, IBAN, proc&#233;dure collective &#8212; France et Europe</h3>
+    <h2 class="oe_slogan">V&#233;rifier un fournisseur avant de le payer</h2>
+    <h3 class="oe_slogan">Registre officiel, TVA, IBAN, proc&#233;dure collective, sanctions. France et 12 pays d'Europe.</h3>
   </div>
 
   <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <p class="oe_mt32">
-        Un bouton sur la fiche partenaire r&#233;pond &#224; une question simple :
-        <b>peut-on payer cette entreprise ?</b> Sirenic interroge les registres
-        officiels et rend un verdict motiv&#233; &#8212; identit&#233; au registre, num&#233;ro de TVA
-        contr&#244;l&#233; au VIES, IBAN v&#233;rifi&#233;, proc&#233;dure collective en cours.
-      </p>
-      <p>
-        Vingt et une autres v&#233;rifications sont disponibles depuis le m&#234;me &#233;cran :
-        comptes annuels d&#233;pos&#233;s, d&#233;tention du capital, alertes l&#233;gales BODACC,
-        agr&#233;ments r&#233;glementaires, march&#233;s publics remport&#233;s, score de d&#233;faillance.
-        Le co&#251;t de chaque appel est affich&#233; <b>avant</b> que vous ne le lanciez.
+        Un bouton sur la fiche contact r&#233;pond &#224; une question simple :
+        <b>peut-on payer cette entreprise ?</b> La r&#233;ponse arrive en trois secondes,
+        motiv&#233;e, tir&#233;e des registres officiels.
       </p>
     </div>
   </div>
 
   <div class="oe_row oe_spaced">
     <div class="oe_span12">
-      <h3>Service externe et donn&#233;es transmises</h3>
+      <h3>Quatre gestes sur la fiche contact</h3>
       <p>
-        Ce module appelle l'API Sirenic (<code>api.sirenic.eu</code>), un service
-        externe. <b>Sont transmis</b> : uniquement l'identifiant du partenaire que
-        vous v&#233;rifiez &#8212; SIREN, SIRET, num&#233;ro de TVA intracommunautaire ou
-        identifiant de registre national &#8212; et, si vous le demandez, l'IBAN &#224;
-        contr&#244;ler.
+        <b>V&#233;rifier avec Sirenic.</b> Identit&#233; au registre, num&#233;ro de TVA contr&#244;l&#233;
+        au VIES, IBAN v&#233;rifi&#233;, proc&#233;dure collective en cours. Verdict motiv&#233;,
+        raisons en liste ferm&#233;e.
       </p>
       <p>
-        <b>Ne sont jamais transmis</b> : les noms de vos contacts, leurs adresses,
-        leurs courriels, vos factures, vos montants, ni aucune autre donn&#233;e de
-        votre base. <b>Aucun appel n'est &#233;mis</b> tant que vous n'avez pas donn&#233;
-        votre accord dans Param&#232;tres &#8594; Sirenic.
+        <b>Compl&#233;ter depuis le registre.</b> Tapez un nom ou un SIREN. Choisissez
+        l'entreprise. Le nom, la rue, le code postal, la ville, le num&#233;ro de TVA et
+        le SIRET se remplissent seuls. Plus de saisie manuelle, plus de coquille.
+      </p>
+      <p>
+        <b>Dossier KYB.</b> Identit&#233;, alertes l&#233;gales du BODACC, comptes d&#233;pos&#233;s,
+        criblage contre les listes de sanctions officielles. Rendu lisible dans le
+        fil de discussion, dat&#233;, comme trace de ce qui a &#233;t&#233; v&#233;rifi&#233; et quand.
+      </p>
+      <p>
+        <b>22 autres v&#233;rifications.</b> Comptes annuels, d&#233;tention du capital,
+        agr&#233;ments r&#233;glementaires, march&#233;s publics remport&#233;s, score de d&#233;faillance.
+        Le co&#251;t de chaque appel est affich&#233; avant que vous ne le lanciez.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3>Ce qui sort de votre base, et ce qui n'en sort pas</h3>
+      <p>
+        Ce module appelle un service externe, l'API Sirenic (api.sirenic.eu).
+        <b>Sont transmis :</b> l'identifiant de l'entreprise que vous v&#233;rifiez, et
+        rien d'autre. SIREN, SIRET, num&#233;ro de TVA ou identifiant de registre
+        national. Plus l'IBAN, si vous demandez son contr&#244;le.
+      </p>
+      <p>
+        <b>Ne sortent jamais :</b> les noms de vos contacts, leurs adresses, leurs
+        courriels, vos factures, vos montants, vos conditions commerciales.
+        <b>Aucun appel n'est &#233;mis</b> tant que vous n'avez pas donn&#233; votre accord
+        dans Param&#232;tres, section Sirenic.
       </p>
     </div>
   </div>
@@ -44,10 +62,10 @@
     <div class="oe_span12">
       <h3>Gratuit, avec votre propre cl&#233;</h3>
       <p>
-        Le module est gratuit. Les appels &#224; l'API sont factur&#233;s &#224; l'unit&#233; par
-        Sirenic, avec la cl&#233; que vous cr&#233;ez sur <code>api.sirenic.eu/compte</code>.
-        Rien n'est pr&#233;lev&#233; par ce module, et aucune cl&#233; d'activation n'est requise
-        pour l'installer ou l'utiliser.
+        Le module ne co&#251;te rien et ne demande aucune cl&#233; d'activation. Les appels
+        &#224; l'API sont factur&#233;s &#224; l'unit&#233; par Sirenic, &#224; partir de 0,002 $, avec la
+        cl&#233; que vous cr&#233;ez sur api.sirenic.eu. Vous voyez le prix avant de cliquer,
+        et rien n'est pr&#233;lev&#233; par ce module.
       </p>
     </div>
   </div>
@@ -56,11 +74,31 @@
     <div class="oe_span12">
       <h3>Ce que ce module ne fait pas</h3>
       <p>
-        L'identifiant national n'est extrait du num&#233;ro de TVA que pour la
-        <b>France, la Belgique et la Pologne</b>, o&#249; la correspondance est
-        document&#233;e. Ailleurs, seul le contr&#244;le VIES du num&#233;ro est possible : le
-        module le dit explicitement plut&#244;t que de deviner un identifiant de
-        registre, ce qui produirait une r&#233;ponse plausible et fausse.
+        L'identifiant national n'est d&#233;duit du num&#233;ro de TVA que pour la France,
+        la Belgique et la Pologne, o&#249; la correspondance est document&#233;e. Ailleurs,
+        seul le contr&#244;le VIES du num&#233;ro est possible, et le module l'&#233;crit noir sur
+        blanc plut&#244;t que de deviner un identifiant de registre. Une donn&#233;e plausible
+        et fausse co&#251;te plus cher qu'une donn&#233;e absente.
+      </p>
+      <p>
+        Une correspondance de criblage signale un <b>homonyme &#224; lever</b> sur les
+        listes officielles. Elle n'&#233;tablit pas qu'une personne ou une entreprise
+        est sanctionn&#233;e, et le rapport le dit.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3>O&#249; il s'installe</h3>
+      <p>
+        Odoo.sh et on-premise. <b>Odoo Online n'accepte aucun module tiers</b>,
+        celui-ci comme les autres. Si vous &#234;tes sur Odoo Online, notre application
+        Make atteint Odoo par son API externe et fait le m&#234;me travail.
+      </p>
+      <p>
+        Configuration : Param&#232;tres, section Sirenic. Lisez ce qui est transmis,
+        cochez le consentement, collez votre cl&#233;. Deux minutes.
       </p>
     </div>
   </div>

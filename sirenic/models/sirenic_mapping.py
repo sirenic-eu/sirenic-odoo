@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Traduction des réponses Sirenic vers Odoo — fonctions PURES.
+"""Traduction des réponses Sirenic vers Odoo, fonctions PURES.
 
 Aucune dépendance à Odoo dans ce fichier : c'est délibéré. Le module ne peut
 pas être chargé dans un Odoo sur cette machine, donc toute la logique qui
@@ -24,7 +24,7 @@ def separer_adresse(adresse, code_postal, commune):
     rue = (adresse or "").strip()
     # ⚠️ S'ARRÊTER AU PREMIER SUFFIXE RETIRÉ. Enchaîner les trois coupes
     # mutilait les rues dont le nom contient la commune : « RUE DE PARIS 75009
-    # PARIS » devenait « RUE DE » — la coupe du code postal + commune était
+    # PARIS » devenait « RUE DE », la coupe du code postal + commune était
     # suivie de celle de la commune, qui mordait dans le nom de la voie.
     for suffixe in (
         "%s %s" % (code_postal or "", commune or ""),
@@ -56,7 +56,7 @@ def champs_depuis_profil(corps):
 
 
 def avertissement_etat(corps):
-    """Un mot si l'entreprise n'est pas active — le silence serait trompeur."""
+    """Un mot si l'entreprise n'est pas active, le silence serait trompeur."""
     etat = corps.get("etat_administratif")
     if etat and etat != _ETAT_ACTIF:
         return "⚠️ Cette entreprise est déclarée « %s » au registre." % etat
@@ -118,7 +118,7 @@ def rapport_kyb_html(corps):
         ("Annonces BODACC", "%s au total, dont %s procédure(s) collective(s)"
             % (_n(bodacc, "total_annonces"), procedures)),
         ("Exercices comptables publiés", _n(fin, "nombre_exercices")),
-        ("Criblage sanctions", "%s — %s liste(s) officielle(s) consultée(s), %s absente(s)"
+        ("Criblage sanctions", "%s, %s liste(s) officielle(s) consultée(s), %s absente(s)"
             % (statut_sanctions, _n(sanctions, "listes_consultees"), _n(sanctions, "listes_absentes"))),
         ("Complétude du dossier", "%s %%" % corps.get("score_completude")),
     ]
@@ -135,7 +135,7 @@ def rapport_kyb_html(corps):
 
     # Une correspondance de criblage est un HOMONYME à lever, pas un verdict.
     # Le taire ferait porter au lecteur une conclusion que la donnée ne permet
-    # pas — exactement le faux plausible que ce produit s'interdit.
+    # pas, exactement le faux plausible que ce produit s'interdit.
     note = ("<p><i>Une correspondance de criblage signale un homonyme à lever sur "
             "les listes officielles ; elle n'établit pas qu'une personne ou une "
             "entreprise est sanctionnée.</i></p>" if touchees else "")

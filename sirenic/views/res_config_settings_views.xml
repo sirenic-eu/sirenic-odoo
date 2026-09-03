@@ -8,7 +8,7 @@
       <xpath expr="//form" position="inside">
         <app data-string="Sirenic" string="Sirenic" name="sirenic">
           <block title="Service externe et données transmises" name="sirenic_consent">
-            <setting help="Ce module interroge l'API Sirenic (api.sirenic.eu). SONT TRANSMIS : uniquement l'identifiant du partenaire vérifié — SIREN, SIRET, numéro de TVA ou identifiant de registre — et, si vous le demandez, l'IBAN à contrôler. NE SONT JAMAIS TRANSMIS : les noms de vos contacts, leurs adresses, vos factures ni vos montants. Aucun appel n'est émis tant que cette case n'est pas cochée.">
+            <setting help="Ce module interroge l'API Sirenic (api.sirenic.eu). SONT TRANSMIS : uniquement l'identifiant du partenaire vérifié, SIREN, SIRET, numéro de TVA ou identifiant de registre, et, si vous le demandez, l'IBAN à contrôler. NE SONT JAMAIS TRANSMIS : les noms de vos contacts, leurs adresses, vos factures ni vos montants. Aucun appel n'est émis tant que cette case n'est pas cochée.">
               <field name="sirenic_consent"/>
             </setting>
           </block>
