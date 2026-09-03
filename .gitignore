@@ -12,3 +12,10 @@ __pycache__/
 # republier dans un dépôt public reste une publication nouvelle, que rien ici
 # ne justifie. On les régénère à la demande, voir README.
 reponse-*.json
+
+# Polices extraites de nos woff2 pour FABRIQUER la banniere.
+# Non versionnees : Plus Jakarta Sans et Manrope sont sous licence OFL, qui
+# autorise la redistribution mais EXIGE de joindre son texte. Elles ne servent
+# qu a regenerer banner.png, deja commite : personne installant le module n en
+# a besoin. Voir README pour les reconstruire.
+polices/

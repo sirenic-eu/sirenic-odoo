@@ -84,3 +84,17 @@ psql -c "CREATE ROLE odoo LOGIN CREATEDB" -c "CREATE DATABASE odoo_essai OWNER o
 .venv-odoo/bin/python odoo-src/odoo-bin -d odoo_essai --db_user=odoo \
   --addons-path=odoo-src/addons,. -i sirenic --stop-after-init
 ```
+
+## Régénérer la bannière
+
+`sirenic/static/description/banner.png` est commité, il n'y a rien à faire pour
+installer le module. Pour la refabriquer, il faut les polices du site, extraites
+de nos propres woff2 et **non versionnées** (Plus Jakarta Sans et Manrope sont
+sous OFL, dont la redistribution exige de joindre le texte de licence) :
+
+```bash
+uv pip install --python .venv-odoo/bin/python fonttools brotli
+mkdir -p polices
+# convertir les woff2 du site en ttf, puis instancier les graisses voulues
+# (les deux polices sont variables, axe wght de 200 a 800)
+```
