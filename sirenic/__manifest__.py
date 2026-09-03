@@ -10,6 +10,9 @@
     "website": "https://api.sirenic.eu",
     "license": "LGPL-3",
     "depends": ["base", "contacts"],
+    # Image de couverture de la fiche boutique. Sans elle, Odoo plafonne la
+    # note du module à 4/5 et l'affiche en avertissement sur la page publique.
+    "images": ["static/description/banner.png"],
     "data": [
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
