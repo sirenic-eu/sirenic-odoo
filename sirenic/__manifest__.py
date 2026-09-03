@@ -4,8 +4,8 @@
     "name": "Sirenic KYB & risque",
     "version": "19.0.1.0.0",
     "category": "Accounting/Accounting",
-    "summary": "Savoir a qui vous vendez avant d'ouvrir un encours : risque de defaillance, "
-               "procedure collective, comptes deposes, sanctions. France et 12 pays d'Europe.",
+    "summary": "Preremplir les fiches clients et fournisseurs depuis le registre officiel, "
+               "puis evaluer le risque : defaillance, procedure collective, sanctions.",
     "author": "Sirenic",
     "website": "https://api.sirenic.eu",
     "license": "LGPL-3",
