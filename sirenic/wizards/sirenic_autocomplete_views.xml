@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_sirenic_autocomplete_form" model="ir.ui.view">
+    <field name="name">sirenic.autocomplete.form</field>
+    <field name="model">sirenic.autocomplete</field>
+    <field name="arch" type="xml">
+      <form string="Compléter depuis le registre">
+        <group>
+          <field name="partner_id" invisible="1"/>
+          <field name="recherche" placeholder="Nom de l'entreprise, ou SIREN à 9 chiffres"/>
+        </group>
+        <div invisible="not message"><field name="message" readonly="1" nolabel="1"/></div>
+        <field name="ligne_ids" nolabel="1" invisible="not ligne_ids">
+          <list create="false" delete="false">
+            <field name="denomination"/>
+            <field name="siren"/>
+            <field name="commune"/>
+            <field name="etat"/>
+            <button name="action_choisir" type="object" string="Recopier" class="btn-primary" icon="fa-download"/>
+          </list>
+        </field>
+        <footer>
+          <button name="action_chercher" type="object" string="Chercher" class="btn-primary"/>
+          <button string="Fermer" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

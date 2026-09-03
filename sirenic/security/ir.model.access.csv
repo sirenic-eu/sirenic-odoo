@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sirenic_verification,sirenic.verification,model_sirenic_verification,base.group_user,1,1,1,1
+access_sirenic_autocomplete,sirenic.autocomplete,model_sirenic_autocomplete,base.group_user,1,1,1,1
+access_sirenic_autocomplete_line,sirenic.autocomplete.line,model_sirenic_autocomplete_line,base.group_user,1,1,1,1

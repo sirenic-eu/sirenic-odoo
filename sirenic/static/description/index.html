@@ -1,0 +1,67 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <h2 class="oe_slogan">Sirenic — vérifier un fournisseur avant de le payer</h2>
+    <h3 class="oe_slogan">Registre officiel, TVA, IBAN, procédure collective — France et Europe</h3>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32">
+        Un bouton sur la fiche partenaire répond à une question simple :
+        <b>peut-on payer cette entreprise ?</b> Sirenic interroge les registres
+        officiels et rend un verdict motivé — identité au registre, numéro de TVA
+        contrôlé au VIES, IBAN vérifié, procédure collective en cours.
+      </p>
+      <p>
+        Vingt et une autres vérifications sont disponibles depuis le même écran :
+        comptes annuels déposés, détention du capital, alertes légales BODACC,
+        agréments réglementaires, marchés publics remportés, score de défaillance.
+        Le coût de chaque appel est affiché <b>avant</b> que vous ne le lanciez.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3>Service externe et données transmises</h3>
+      <p>
+        Ce module appelle l'API Sirenic (<code>api.sirenic.eu</code>), un service
+        externe. <b>Sont transmis</b> : uniquement l'identifiant du partenaire que
+        vous vérifiez — SIREN, SIRET, numéro de TVA intracommunautaire ou
+        identifiant de registre national — et, si vous le demandez, l'IBAN à
+        contrôler.
+      </p>
+      <p>
+        <b>Ne sont jamais transmis</b> : les noms de vos contacts, leurs adresses,
+        leurs courriels, vos factures, vos montants, ni aucune autre donnée de
+        votre base. <b>Aucun appel n'est émis</b> tant que vous n'avez pas donné
+        votre accord dans Paramètres → Sirenic.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3>Gratuit, avec votre propre clé</h3>
+      <p>
+        Le module est gratuit. Les appels à l'API sont facturés à l'unité par
+        Sirenic, avec la clé que vous créez sur <code>api.sirenic.eu/compte</code>.
+        Rien n'est prélevé par ce module, et aucune clé d'activation n'est requise
+        pour l'installer ou l'utiliser.
+      </p>
+    </div>
+  </div>
+
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3>Ce que ce module ne fait pas</h3>
+      <p>
+        L'identifiant national n'est extrait du numéro de TVA que pour la
+        <b>France, la Belgique et la Pologne</b>, où la correspondance est
+        documentée. Ailleurs, seul le contrôle VIES du numéro est possible : le
+        module le dit explicitement plutôt que de deviner un identifiant de
+        registre, ce qui produirait une réponse plausible et fausse.
+      </p>
+    </div>
+  </div>
+</section>

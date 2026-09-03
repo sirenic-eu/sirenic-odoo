@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="res_config_settings_view_form_sirenic" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.inherit.sirenic</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="inside">
+        <app data-string="Sirenic" string="Sirenic" name="sirenic">
+          <block title="Service externe et données transmises" name="sirenic_consent">
+            <setting help="Ce module interroge l'API Sirenic (api.sirenic.eu). SONT TRANSMIS : uniquement l'identifiant du partenaire vérifié — SIREN, SIRET, numéro de TVA ou identifiant de registre — et, si vous le demandez, l'IBAN à contrôler. NE SONT JAMAIS TRANSMIS : les noms de vos contacts, leurs adresses, vos factures ni vos montants. Aucun appel n'est émis tant que cette case n'est pas cochée.">
+              <field name="sirenic_consent"/>
+            </setting>
+          </block>
+          <block title="Votre accès" name="sirenic_acces">
+            <setting string="Clé d'API" help="Créez la vôtre sur api.sirenic.eu/compte. Le module est gratuit ; chaque appel est facturé à l'unité par Sirenic, et son coût est affiché avant que vous ne le lanciez.">
+              <field name="sirenic_api_key" password="True"/>
+            </setting>
+            <setting string="Adresse de l'API" help="À ne changer que sur instruction de Sirenic.">
+              <field name="sirenic_base_url"/>
+            </setting>
+          </block>
+        </app>
+      </xpath>
+    </field>
+  </record>
+</odoo>
