@@ -7,7 +7,7 @@ from odoo import _, models
 from odoo.exceptions import UserError
 
 from .routes import ROUTES
-from .sirenic_mapping import rapport_kyb_html
+from .sirenic_mapping import rapport_kyb_html, rapport_score_html
 
 # Pays dont le numéro de TVA se TERMINE par l'identifiant national, et dont
 # nous savons donc l'extraire sans inventer de correspondance.
@@ -166,4 +166,33 @@ class ResPartner(models.Model):
             "target": "new",
             "context": {"default_partner_id": self.id,
                         "default_recherche": self.name or ""},
+        }
+
+    def action_sirenic_client(self):
+        """Le geste principal cote CLIENT : peut-on lui ouvrir un encours ?
+
+        Le score de defaillance repond directement a cette question, la ou le
+        dossier de facturation repond a « puis-je payer ce fournisseur ». Ce
+        sont deux gestes distincts, sur deux routes distinctes.
+        """
+        self.ensure_one()
+        siren = self._sirenic_siren()
+        if not siren:
+            raise UserError(_(
+                "Aucun SIREN exploitable sur cette fiche.\n\n"
+                "Renseignez le SIRET ou le numero de TVA francaise, ou utilisez "
+                "la saisie assistee pour completer la fiche depuis le registre."))
+        corps = self.env["sirenic.client"].appeler("/v1/score/defaillance/%s" % siren)
+        self.message_post(body=Markup(rapport_score_html(corps)))
+        signaux = corps.get("signaux_bodacc") or {}
+        alerte = any(signaux.values())
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Signal au BODACC") if alerte else _("Classe de risque : %s", corps.get("classe")),
+                "message": _("Risque a 12 mois : %s", corps.get("risque_12m") or _("non calcule")),
+                "type": "warning" if alerte else "success",
+                "sticky": False,
+            },
         }

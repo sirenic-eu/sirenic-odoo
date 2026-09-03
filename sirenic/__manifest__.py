@@ -4,8 +4,8 @@
     "name": "Sirenic KYB & risque",
     "version": "19.0.1.0.0",
     "category": "Accounting/Accounting",
-    "summary": "Verifier un fournisseur avant de le payer : registre officiel, TVA, IBAN, "
-               "procedure collective, sanctions. France et 12 pays d'Europe.",
+    "summary": "Savoir a qui vous vendez avant d'ouvrir un encours : risque de defaillance, "
+               "procedure collective, comptes deposes, sanctions. France et 12 pays d'Europe.",
     "author": "Sirenic",
     "website": "https://api.sirenic.eu",
     "license": "LGPL-3",

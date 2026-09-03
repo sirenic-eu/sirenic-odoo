@@ -10,8 +10,10 @@
            l'assistant, pour ne pas encombrer la fiche. -->
       <xpath expr="//div[@name='button_box']" position="before">
         <header>
-          <button name="action_sirenic_dossier" type="object" string="Vérifier avec Sirenic"
+          <button name="action_sirenic_client" type="object" string="Évaluer ce client"
                   class="btn-primary" invisible="not is_company"/>
+          <button name="action_sirenic_dossier" type="object" string="Vérifier ce fournisseur"
+                  invisible="not is_company"/>
           <button name="action_sirenic_kyb" type="object" string="Dossier KYB"
                   invisible="not is_company"/>
           <button name="action_sirenic_completer" type="object" string="Compléter depuis le registre"
