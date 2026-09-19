@@ -9,7 +9,7 @@
       <p class="oe_mt32">
         Un client vous demande 30 jours de paiement. Un bouton sur sa fiche vous
         dit sa classe de risque, son risque de d&#233;faillance &#224; 12 mois, et si le
-        BODACC a publi&#233; une <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/detecter-procedure-collective-france-europe">proc&#233;dure collective</a> &#224; son nom. Trois secondes, avant
+        BODACC a publi&#233; une proc&#233;dure collective &#224; son nom. Trois secondes, avant
         la commande, pas apr&#232;s l'impay&#233;.
       </p>
     </div>
@@ -46,20 +46,20 @@
         sur n'importe quelle fiche client ou fournisseur.
       </p>
       <p>
-        <b>&#201;valuer ce client.</b> Classe de risque, <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/evaluer-risque-defaillance-client-bareme-rendu">risque de d&#233;faillance &#224; 12 mois</a>, signaux du
+        <b>&#201;valuer ce client.</b> Classe de risque, risque &#224; 12 mois, signaux du
         BODACC. Le rapport dit l'&#226;ge des comptes sur lesquels il s'appuie, et
         rappelle que ce n'est ni un avis de solvabilit&#233; ni une notation de cr&#233;dit.
+        Le bar&#232;me et ce qu'il rend sont publi&#233;s :
+        api.sirenic.eu/cas-usage/evaluer-risque-defaillance-client-bareme-rendu
       </p>
       <p>
         <b>V&#233;rifier ce fournisseur.</b> Identit&#233; au registre, num&#233;ro de TVA
         contr&#244;l&#233; au VIES, IBAN v&#233;rifi&#233;, proc&#233;dure collective. Avant le virement.
-        Les quatre contr&#244;les, un par un : <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/verifier-fournisseur-avant-paiement-identite-tva-iban">v&#233;rifier un fournisseur avant paiement</a>.
       </p>
       <p>
         <b>Dossier KYB.</b> Identit&#233;, alertes l&#233;gales, comptes d&#233;pos&#233;s, criblage
         contre les listes de sanctions officielles. Rendu lisible dans le fil de
-        discussion, dat&#233;, comme trace de ce qui a &#233;t&#233; v&#233;rifi&#233; et quand. Chaque ligne
-        porte sa source et sa date : <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/kyb-verification-entreprise-automatisee-avec-provenance">la v&#233;rification KYB avec provenance</a>.
+        discussion, dat&#233;, comme trace de ce qui a &#233;t&#233; v&#233;rifi&#233; et quand.
       </p>
       <p>
         <b>22 autres v&#233;rifications.</b> Comptes annuels, d&#233;tention du capital,
@@ -97,9 +97,8 @@
       </p>
       <p>
         Pas de cr&#233;dits &#224; acheter d'avance, pas de devis &#224; demander : un appel, un
-        prix. Les deux mod&#232;les compar&#233;s, chiffres en main :
-        <a target="_blank" rel="noopener" href="https://api.sirenic.eu/comparatif/sirenic-ou-pappers-credits-contre-paiement-appel">cr&#233;dits pr&#233;pay&#233;s ou paiement &#224; l'appel</a> et
-        <a target="_blank" rel="noopener" href="https://api.sirenic.eu/comparatif/sirenic-ou-societe-com-tarif-public-contre-devis">tarif public affich&#233; ou devis commercial</a>.
+        prix. Les comparaisons chiffr&#233;es avec les autres bases d'entreprises,
+        Pappers et Societe.com comprises : api.sirenic.eu/comparatif
       </p>
     </div>
   </div>
@@ -116,13 +115,13 @@
       <p>
         L'identifiant national n'est d&#233;duit du num&#233;ro de TVA que pour la France,
         la Belgique et la Pologne, o&#249; la correspondance est document&#233;e. Ailleurs,
-        seul le <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/verifier-numero-tva-intracommunautaire-vies-api-appel">contr&#244;le VIES du num&#233;ro</a> est possible, et le module l'&#233;crit plut&#244;t
+        seul le contr&#244;le VIES du num&#233;ro est possible, et le module l'&#233;crit plut&#244;t
         que de deviner un identifiant de registre. Une donn&#233;e plausible et fausse
         co&#251;te plus cher qu'une donn&#233;e absente.
       </p>
       <p>
         Une correspondance de criblage signale un <b>homonyme &#224; lever</b> sur les
-        <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage/cribler-nom-sur-6-listes-sanctions-officielles">six listes de sanctions officielles</a>. Elle n'&#233;tablit pas qu'une personne ou une entreprise
+        listes officielles. Elle n'&#233;tablit pas qu'une personne ou une entreprise
         est sanctionn&#233;e, et le rapport le pr&#233;cise.
       </p>
     </div>
@@ -147,9 +146,8 @@
     <div class="oe_span12">
       <h3>Pour aller plus loin</h3>
       <p>
-        Le <a target="_blank" rel="noopener" href="https://api.sirenic.eu/api">catalogue des routes</a>, leur <a target="_blank" rel="noopener" href="https://api.sirenic.eu/offres">tarif au d&#233;tail</a>, et les
-        <a target="_blank" rel="noopener" href="https://api.sirenic.eu/cas-usage">cas d'usage</a> d&#233;crits un par un, avec la requ&#234;te envoy&#233;e et
-        la r&#233;ponse rendue.
+        Le catalogue des routes, leur tarif au d&#233;tail et ce que chacune rend :
+        api.sirenic.eu/api
       </p>
     </div>
   </div>
