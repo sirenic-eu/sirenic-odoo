@@ -98,3 +98,9 @@ mkdir -p polices
 # convertir les woff2 du site en ttf, puis instancier les graisses voulues
 # (les deux polices sont variables, axe wght de 200 a 800)
 ```
+
+## Une étoile pour ce dépôt
+
+Si ce module vous a évité une vérification à la main, une étoile aide d'autres utilisateurs d'Odoo à le trouver.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=sirenic-eu/sirenic-odoo&type=Date)](https://star-history.com/#sirenic-eu/sirenic-odoo&Date)
