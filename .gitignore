@@ -1,4 +1,4 @@
-# Banc d'essai local — jamais publié
+# Banc d'essai local, jamais publié
 odoo-src/
 .venv-odoo/
 requirements-sans-ldap.txt
@@ -7,7 +7,7 @@ __pycache__/
 
 # ⚠️ RÉPONSES BRUTES DE L'API : NON COMMITÉES.
 # Elles servent de fixtures RÉELLES aux tests (une fixture inventée encode
-# l'hypothèse qu'on teste, elle ne peut que la confirmer) — mais un dossier KYB
+# l'hypothèse qu'on teste, elle ne peut que la confirmer), mais un dossier KYB
 # porte les noms des DIRIGEANTS. Données publiques du registre, oui ; les
 # republier dans un dépôt public reste une publication nouvelle, que rien ici
 # ne justifie. On les régénère à la demande, voir README.
@@ -19,3 +19,9 @@ reponse-*.json
 # qu a regenerer banner.png, deja commite : personne installant le module n en
 # a besoin. Voir README pour les reconstruire.
 polices/
+
+# Entrées du générateur de catalogue, téléchargées depuis l'API (voir README) :
+# une copie commitée périmerait, celle du 03/09 avait 88 chemins et des
+# libellés coupés.
+openapi.json
+index.md

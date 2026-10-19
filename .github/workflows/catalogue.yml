@@ -1,0 +1,31 @@
+# Le catalogue du module (sirenic/models/routes.py) est généré depuis la grille
+# servie par l'API, et la fiche boutique n'y porte qu'un nombre, relu ici. Ce
+# contrôle les confronte à la grille servie à chaque poussée et une fois par
+# semaine, parce que la dérive ne vient pas d'ici : elle vient d'une route
+# ajoutée ou changée côté API. Un rouge se répare en relançant le générateur
+# (README, « Régénérer le catalogue de routes »).
+name: catalogue contre la grille servie
+
+on:
+  push:
+  schedule:
+    - cron: "23 6 * * 1" # tous les lundis, 06:23 UTC
+  workflow_dispatch:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # python3 et curl sont fournis par l'image ubuntu-latest ; le module
+      # n'a besoin que de la bibliothèque standard pour ces contrôles.
+      - name: Grille servie
+        run: |
+          curl -sSf --max-time 60 https://api.sirenic.eu/openapi.json -o openapi.json
+          curl -sSf --max-time 60 https://api.sirenic.eu/index.md -o index.md
+      - name: Test du générateur
+        run: python3 tester-generateur.py
+      - name: Catalogue et fiche contre la grille servie
+        run: python3 generer-routes.py --verifier
+      - name: Contrôles statiques du module
+        run: python3 controler-module.py

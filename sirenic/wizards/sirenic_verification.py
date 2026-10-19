@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Assistant « vérification Sirenic ».
 
-Vingt-et-une routes ont un geste sur une fiche partenaire. Vingt-et-un boutons
-rendraient la fiche illisible : l'assistant les rassemble en UNE liste
-déroulante, dont les options sont GÉNÉRÉES depuis la grille tarifaire. Ajouter
-une route à l'API la fait apparaître ici sans toucher à ce fichier.
+Les routes du catalogue ont chacune un geste sur une fiche partenaire. Un
+bouton par route rendrait la fiche illisible : l'assistant les rassemble en UNE
+liste déroulante, dont les options sont GÉNÉRÉES depuis la grille servie
+(generer-routes.py). Ajouter une route à l'API la fait apparaître ici sans
+toucher à ce fichier.
 """
 import json
 

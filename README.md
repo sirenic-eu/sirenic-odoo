@@ -24,24 +24,52 @@ ne puisse pas la contourner.
 
 ## Régénérer le catalogue de routes
 
-`sirenic/models/routes.py` est **généré**, jamais édité à la main :
+`sirenic/models/routes.py` est **généré**, jamais édité à la main, depuis deux
+surfaces servies par l'API, téléchargées et jamais commitées :
 
 ```bash
-curl -s https://api.sirenic.eu/openapi.json -o openapi.json
+curl -sSf https://api.sirenic.eu/openapi.json -o openapi.json
+curl -sSf https://api.sirenic.eu/index.md -o index.md
 python3 generer-routes.py
 ```
 
-Le générateur ne retient que les routes dont la clé de chemin est un SIREN ou un
-SIRET seul, celles qui ont un geste évident sur une fiche partenaire, et
-écarte celles dont la latence dépasse une action synchrone.
+- `openapi.json` donne les chemins, leurs paramètres (en ligne ou en `$ref`),
+  leurs formats de réponse et leur prix (`x-price`).
+- `index.md`, l'accueil français, donne la description française de chaque
+  route : le libellé de la liste déroulante en est la première proposition,
+  coupée au mot et signalée par « … » au-delà de 70 caractères.
+- Le prix s'affiche en euros, au même nombre que la grille : un crédit vaut un
+  euro, et l'utilisateur d'Odoo paie avec sa clé, en crédits. Le générateur
+  refuse si ce prix diffère de celui qu'affiche `index.md`.
+
+Une route entre si sa clé de chemin est un SIREN ou un SIRET seul (un geste
+évident sur une fiche partenaire), sans paramètre de requête obligatoire (le
+geste n'a pas de champ de saisie) et avec une réponse JSON ; les routes de
+compte et celles dont la latence dépasse une action synchrone sont écartées.
+Les routes écartées malgré une clé SIREN ou SIRET sont nommées, avec leur
+raison, en tête de `routes.py`.
+
+Le générateur refuse (code 1) plutôt que d'inventer : une route retenue sans
+description française, un prix en désaccord, ou un `index.md` dont le tableau
+des routes a changé de forme. Un rouge de ce genre vient alors d'une refonte de
+l'accueil de l'API, pas d'Odoo.
 
 ## Contrôles
 
 ```bash
-python3 controler-module.py
+python3 tester-generateur.py          # le générateur, sur une petite spec de forme servie
+python3 generer-routes.py --verifier  # routes.py et la fiche, contre la grille servie
+python3 controler-module.py           # le module, statiquement
 ```
 
-Vérifie le manifeste, la présence des fichiers déclarés, **l'ordre de
+Les trois tournent dans la CI publique du dépôt (`.github/workflows/catalogue.yml`),
+à chaque poussée et chaque lundi : la dérive ne vient pas d'ici, elle vient d'une
+route ajoutée ou changée côté API. `--verifier` régénère en mémoire, refuse
+toute différence avec `routes.py`, et relit le seul nombre de la fiche boutique
+que le service peut contredire (« à partir de … € », le prix de la saisie
+assistée, qu'aucune route du catalogue ne passe en dessous).
+
+`controler-module.py` vérifie le manifeste, la présence des fichiers déclarés, **l'ordre de
 chargement** (une action référencée avant d'être définie fait échouer
 l'installation), les droits d'accès, la bonne formation des XML et la
 compilation Python.
