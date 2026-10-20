@@ -1,6 +1,7 @@
 # Le catalogue du module (sirenic/models/routes.py) est généré depuis la grille
-# servie par l'API, et la fiche boutique n'y porte qu'un nombre, relu ici. Ce
-# contrôle les confronte à la grille servie à chaque poussée et une fois par
+# servie par l'API ; la fiche boutique y est relue aussi : son « à partir de
+# … € » contre la grille, ce qu'elle dit de l'offre contre /.well-known/mcp.json.
+# Ce contrôle les confronte au service à chaque poussée et une fois par
 # semaine, parce que la dérive ne vient pas d'ici : elle vient d'une route
 # ajoutée ou changée côté API. Un rouge se répare en relançant le générateur
 # (README, « Régénérer le catalogue de routes »).
@@ -23,6 +24,7 @@ jobs:
         run: |
           curl -sSf --max-time 60 https://api.sirenic.eu/openapi.json -o openapi.json
           curl -sSf --max-time 60 https://api.sirenic.eu/index.md -o index.md
+          curl -sSf --max-time 60 https://api.sirenic.eu/.well-known/mcp.json -o mcp.json
       - name: Test du générateur
         run: python3 tester-generateur.py
       - name: Catalogue et fiche contre la grille servie

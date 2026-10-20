@@ -20,8 +20,10 @@ reponse-*.json
 # a besoin. Voir README pour les reconstruire.
 polices/
 
-# Entrées du générateur de catalogue, téléchargées depuis l'API (voir README) :
+# Entrées du générateur de catalogue et de son vérificateur (mcp.json),
+# téléchargées depuis l'API (voir README) :
 # une copie commitée périmerait, celle du 03/09 avait 88 chemins et des
 # libellés coupés.
 openapi.json
 index.md
+mcp.json

@@ -128,5 +128,47 @@ v(code == 1 and "factorisee" in sortie, "route gardée sans description françai
 code, _, sortie = jouer(SPEC, "# Sirenic\n\nplus de tableau\n")
 v(code == 1, "index.md sans tableau : refus")
 
+print("La fiche boutique contre /.well-known/mcp.json")
+# Les trois champs relus, tels que les sert /.well-known/mcp.json le 20/10/2026.
+CLE = {"unit": "1 credit = 1 EUR, same per-call prices",
+       "free_quota": "150 calls/month on 109 of 125 routes (the price list says which) with a verified account",
+       "purchase": "Open today: 150 free calls a month with an account, on 109 of 125 routes (the price list "
+                   "says which), and pay-per-call over x402 (USDC or EURC), with no account except registry "
+                   "filings. Prepaid credits: card top-up is not open yet."}
+
+
+def verifier(cle, fiche=None):
+    """(code, sortie) de --verifier sur la VRAIE fiche du dépôt (ou une variante) et un mcp.json donné."""
+    with tempfile.TemporaryDirectory() as d:
+        d = pathlib.Path(d)
+        shutil.copy(ICI / "generer-routes.py", d)
+        (d / "sirenic/models").mkdir(parents=True)
+        (d / "sirenic/static/description").mkdir(parents=True)
+        (d / "openapi.json").write_text(json.dumps(SPEC), encoding="utf-8")
+        (d / "index.md").write_text(INDEX, encoding="utf-8")
+        (d / "libelles-fr.json").write_text("{}", encoding="utf-8")
+        reelle = (ICI / "sirenic/static/description/index.html").read_text(encoding="utf-8")
+        (d / "sirenic/static/description/index.html").write_text(fiche or reelle, encoding="utf-8")
+        (d / "mcp.json").write_text(json.dumps({"payment": {"api_key_alternative": cle}}), encoding="utf-8")
+        subprocess.run([sys.executable, "-I", "generer-routes.py"], cwd=d, capture_output=True, text=True)
+        p = subprocess.run([sys.executable, "-I", "generer-routes.py", "--verifier"], cwd=d,
+                           capture_output=True, text=True)
+        return p.returncode, (p.stdout + p.stderr).strip().splitlines()[-1:] or [""]
+
+
+code, sortie = verifier(CLE)
+v(code == 0, "fiche du dépôt et service d'accord : %s" % sortie)
+code, sortie = verifier(dict(CLE, free_quota=CLE["free_quota"].replace("150", "149", 1)))
+v(code == 1 and "149" in sortie[0], "quota servi changé (149) : refus (%s)" % sortie)
+code, sortie = verifier(dict(CLE, free_quota="free calls, see the price list"))
+v(code == 1, "quota servi illisible : refus (%s)" % sortie)
+code, sortie = verifier(dict(CLE, unit="1 credit = 2 EUR, same per-call prices"))
+v(code == 1 and "cr" in sortie[0], "valeur du crédit changée : refus (%s)" % sortie)
+code, sortie = verifier(dict(CLE, purchase=CLE["purchase"].replace(" Prepaid credits: card top-up is not open yet.", "")))
+v(code == 1 and "recharge" in sortie[0], "recharge par carte ouverte, la fiche dit le contraire : refus (%s)" % sortie)
+reelle = (ICI / "sirenic/static/description/index.html").read_text(encoding="utf-8")
+code, sortie = verifier(CLE, reelle.replace("150 appels offerts", "100 appels offerts"))
+v(code == 1 and "100" in sortie[0], "fiche qui écrit 100 appels : refus (%s)" % sortie)
+
 print("%d contrôles, %d en échec" % (ok + ko, ko))
 sys.exit(1 if ko else 0)

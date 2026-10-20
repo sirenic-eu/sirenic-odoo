@@ -16,6 +16,10 @@ qu'aucune copie ne périme dans le dépôt :
     python3 generer-routes.py              écrit sirenic/models/routes.py
     python3 generer-routes.py --verifier   régénère en mémoire et refuse toute
                                            différence avec routes.py et la fiche
+
+--verifier lit aussi mcp.json (https://api.sirenic.eu/.well-known/mcp.json,
+téléchargé de même) : la fiche boutique y confronte ce qu'elle dit de l'offre
+(appels offerts par mois, valeur d'un crédit, recharge par carte).
 """
 import json, pathlib, re, sys
 
@@ -191,9 +195,34 @@ ROUTES = {
 ''' % (len(routes), exclues, corps)
 
 
-def verifier_fiche(spec, routes):
+def verifier_offre(html, cle):
+    """Ce que la fiche dit de l'offre, contre payment.api_key_alternative de mcp.json.
+
+    Le texte de la fiche est celui que CDU a relu (lettre Q2 A du 20/10/2026) :
+    ce contrôle n'en écrit aucun mot, il refuse quand le service le contredit.
+    """
+    html = re.sub(r"\s+", " ", html)  # une phrase repliée sur deux lignes reste lue
+    servi = re.match(r"([0-9]+) calls/month", cle.get("free_quota") or "")
+    if not servi:
+        raise Refus("mcp.json : quota gratuit illisible (free_quota : %r)" % (cle.get("free_quota") or "")[:120])
+    ecrits = set(re.findall(r"([0-9]+) appels", html))
+    if ecrits - {servi.group(1)}:
+        raise Refus("fiche : %s appels offerts écrits, le service en sert %s par mois"
+                    % (", ".join(sorted(ecrits - {servi.group(1)})), servi.group(1)))
+    if "cr&#233;dit = " in html:
+        unite = re.match(r"1 credit = ([0-9]+) EUR", cle.get("unit") or "")
+        if not unite or "1 cr&#233;dit = %s &#8364;" % unite.group(1) not in html:
+            raise Refus("fiche : « 1 crédit = 1 € », le service dit %r" % (cle.get("unit") or "")[:80])
+    if "recharge par carte n'est pas encore ouverte" in html:
+        if "card top-up is not open yet" not in (cle.get("purchase") or ""):
+            raise Refus("fiche : la recharge par carte « pas encore ouverte », le service ne le dit plus "
+                        "(purchase : %r)" % (cle.get("purchase") or "")[:160])
+
+
+def verifier_fiche(spec, routes, mcp):
     """La fiche boutique ne porte aucun nombre que le service contredit."""
     html = FICHE.read_text(encoding="utf-8")
+    verifier_offre(html, (mcp.get("payment") or {}).get("api_key_alternative") or {})
     m = re.search(r"&#224; partir de ([0-9]+(?:,[0-9]+)?) &#8364;", html)
     if not m:
         raise Refus("fiche : « à partir de N € » introuvable, la phrase a changé")
@@ -214,7 +243,8 @@ def main(argv):
         routes, ecartees = selectionner(spec, grille)
         texte = rendre(routes, ecartees)
         if "--verifier" in argv:
-            verifier_fiche(spec, routes)
+            mcp = json.loads(pathlib.Path("mcp.json").read_text(encoding="utf-8"))
+            verifier_fiche(spec, routes, mcp)
             actuel = SORTIE.read_text(encoding="utf-8")
             if actuel != texte:
                 import difflib
@@ -225,6 +255,10 @@ def main(argv):
             print("OK : %d routes, identiques à la grille servie ; fiche d'accord." % len(routes))
             return 0
         SORTIE.write_text(texte, encoding="utf-8")
+    except FileNotFoundError as e:
+        print("REFUS : entrée absente, %s : la télécharger (README, « Régénérer le catalogue de routes »)"
+              % e.filename, file=sys.stderr)
+        return 1
     except Refus as e:
         print("REFUS :", e, file=sys.stderr)
         return 1

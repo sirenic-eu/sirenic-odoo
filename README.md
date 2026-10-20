@@ -30,6 +30,7 @@ surfaces servies par l'API, téléchargées et jamais commitées :
 ```bash
 curl -sSf https://api.sirenic.eu/openapi.json -o openapi.json
 curl -sSf https://api.sirenic.eu/index.md -o index.md
+curl -sSf https://api.sirenic.eu/.well-known/mcp.json -o mcp.json  # lu par --verifier seulement
 python3 generer-routes.py
 ```
 
@@ -58,16 +59,19 @@ l'accueil de l'API, pas d'Odoo.
 
 ```bash
 python3 tester-generateur.py          # le générateur, sur une petite spec de forme servie
-python3 generer-routes.py --verifier  # routes.py et la fiche, contre la grille servie
+python3 generer-routes.py --verifier  # routes.py et la fiche, contre la grille et l'offre servies
 python3 controler-module.py           # le module, statiquement
 ```
 
 Les trois tournent dans la CI publique du dépôt (`.github/workflows/catalogue.yml`),
 à chaque poussée et chaque lundi : la dérive ne vient pas d'ici, elle vient d'une
 route ajoutée ou changée côté API. `--verifier` régénère en mémoire, refuse
-toute différence avec `routes.py`, et relit le seul nombre de la fiche boutique
-que le service peut contredire (« à partir de … € », le prix de la saisie
-assistée, qu'aucune route du catalogue ne passe en dessous).
+toute différence avec `routes.py`, et relit ce que la fiche boutique dit que le
+service peut contredire : « à partir de … € » (le prix de la saisie assistée,
+qu'aucune route du catalogue ne passe en dessous), et, contre
+`/.well-known/mcp.json` téléchargé en `mcp.json` comme les deux autres entrées,
+le nombre d'appels offerts par mois, la valeur d'un crédit et « leur recharge
+par carte n'est pas encore ouverte ».
 
 `controler-module.py` vérifie le manifeste, la présence des fichiers déclarés, **l'ordre de
 chargement** (une action référencée avant d'être définie fait échouer
