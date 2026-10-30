@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # FICHIER GÉNÉRÉ PAR generer-routes.py, NE PAS ÉDITER À LA MAIN.
 # Source : openapi.json et index.md servis par https://api.sirenic.eu,
-# 22 routes retenues.
+# 24 routes retenues.
 #
 # Critère de sélection, lu dans la spec et non décrété ici : une route entre si
 # sa clé de chemin est un SIREN ou un SIRET seul (un geste évident sur une
@@ -25,6 +25,7 @@ ROUTES = {
     'v1_entreprise_siren_contentieux': {'chemin': '/v1/entreprise/{siren}/contentieux', 'cle': 'siren', 'libelle': 'Décisions des tribunaux de commerce rattachées à une entreprise…', 'prix': '0,01\xa0€'},
     'v1_entreprise_siren_documents': {'chemin': '/v1/entreprise/{siren}/documents', 'cle': 'siren', 'libelle': "Dépôts officiels d'une entreprise française au registre INPI RNE", 'prix': '0,02\xa0€'},
     'v1_entreprise_siren_capital': {'chemin': '/v1/entreprise/{siren}/capital', 'cle': 'siren', 'libelle': "Détention et capital d'une entreprise française, extraits par IA des…", 'prix': '0,35\xa0€'},
+    'v1_entreprise_siren_encours': {'chemin': '/v1/entreprise/{siren}/encours', 'cle': 'siren', 'libelle': "Encours d'un nouveau client français", 'prix': '0,12\xa0€'},
     'v1_entreprise_siren_facturation_prep': {'chemin': '/v1/entreprise/{siren}/facturation-prep', 'cle': 'siren', 'libelle': 'Entrée en relation fournisseur', 'prix': '0,02\xa0€'},
     'v1_entreprise_siren': {'chemin': '/v1/entreprise/{siren}', 'cle': 'siren', 'libelle': "Fiche complète d'une entreprise française par SIREN", 'prix': '0,005\xa0€'},
     'v1_entreprise_siren_financements_ue': {'chemin': '/v1/entreprise/{siren}/financements-ue', 'cle': 'siren', 'libelle': "Financements de l'Union pour la recherche et l'innovation reçus par…", 'prix': '0,02\xa0€'},
@@ -38,4 +39,5 @@ ROUTES = {
     'v1_entreprise_siren_concurrents_marches': {'chemin': '/v1/entreprise/{siren}/concurrents-marches', 'cle': 'siren', 'libelle': 'Qui remporte des marchés publics français sur les MÊMES segments CPV…', 'prix': '0,02\xa0€'},
     'v1_entreprise_siren_emploi': {'chemin': '/v1/entreprise/{siren}/emploi', 'cle': 'siren', 'libelle': "Signaux d'embauche d'une entreprise française, dérivés à la demande…", 'prix': '0,02\xa0€'},
     'v1_entreprise_siren_etablissements': {'chemin': '/v1/entreprise/{siren}/etablissements', 'cle': 'siren', 'libelle': "Tous les établissements (SIRET) d'une entreprise française", 'prix': '0,003\xa0€'},
+    'v1_entreprise_siren_trajectoire': {'chemin': '/v1/entreprise/{siren}/trajectoire', 'cle': 'siren', 'libelle': "Trajectoire d'une entreprise française", 'prix': '0,02\xa0€'},
 }

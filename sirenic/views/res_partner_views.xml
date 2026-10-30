@@ -6,7 +6,7 @@
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
       <!-- Le geste principal est un bouton d'en-tête : « puis-je payer ce
-           fournisseur ». Les vingt autres vérifications passent par
+           fournisseur ». Les autres vérifications du catalogue passent par
            l'assistant, pour ne pas encombrer la fiche. -->
       <xpath expr="//div[@name='button_box']" position="before">
         <header>
