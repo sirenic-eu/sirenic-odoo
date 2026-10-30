@@ -2,7 +2,7 @@
 {
     # ⚠️ 25 caractères maximum, règle de la boutique Odoo. Celui-ci en fait 20.
     "name": "Sirenic KYB & risque",
-    "version": "19.0.1.2.0",
+    "version": "19.0.1.2.1",
     "category": "Accounting/Accounting",
     "summary": "Preremplir les fiches clients et fournisseurs depuis le registre officiel, "
                "puis evaluer le risque : defaillance, procedure collective, sanctions.",
