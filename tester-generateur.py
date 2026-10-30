@@ -137,13 +137,17 @@ CLE = {"unit": "1 credit = 1 EUR, same per-call prices",
                    "filings. Prepaid credits: card top-up is not open yet."}
 
 
-def verifier(cle, fiche=None):
-    """(code, sortie) de --verifier sur la VRAIE fiche du dépôt (ou une variante) et un mcp.json donné."""
+def verifier(cle, fiche=None, module=None):
+    """(code, sortie) de --verifier sur la VRAIE fiche du dépôt (ou une variante) et un mcp.json donné ;
+    `module` : des fichiers du module, {chemin sous sirenic/ : texte}, posés à côté de la fiche."""
     with tempfile.TemporaryDirectory() as d:
         d = pathlib.Path(d)
         shutil.copy(ICI / "generer-routes.py", d)
         (d / "sirenic/models").mkdir(parents=True)
         (d / "sirenic/static/description").mkdir(parents=True)
+        for chemin, texte in (module or {}).items():
+            (d / "sirenic" / chemin).parent.mkdir(parents=True, exist_ok=True)
+            (d / "sirenic" / chemin).write_text(texte, encoding="utf-8")
         (d / "openapi.json").write_text(json.dumps(SPEC), encoding="utf-8")
         (d / "index.md").write_text(INDEX, encoding="utf-8")
         (d / "libelles-fr.json").write_text("{}", encoding="utf-8")
@@ -169,6 +173,37 @@ v(code == 1 and "recharge" in sortie[0], "recharge par carte ouverte, la fiche d
 reelle = (ICI / "sirenic/static/description/index.html").read_text(encoding="utf-8")
 code, sortie = verifier(CLE, reelle.replace("150 appels offerts", "100 appels offerts"))
 v(code == 1 and "100" in sortie[0], "fiche qui écrit 100 appels : refus (%s)" % sortie)
+
+print("Les textes du module contre /.well-known/mcp.json")
+# Les VRAIS textes du dépôt (chaînes Python, vues XML), hors catalogue généré et fiche.
+REELS = {str(f.relative_to(ICI / "sirenic")): f.read_text(encoding="utf-8")
+         for f in sorted((ICI / "sirenic").rglob("*")) if f.suffix in (".py", ".xml")
+         and "__pycache__" not in f.parts and f.name != "routes.py"}
+CLIENT = "models/sirenic_client.py"
+REGLAGES = "models/res_config_settings.py"
+code, sortie = verifier(CLE, module=REELS)
+v(code == 0 and len(REELS) > 5, "textes du module (%d fichiers) et service d'accord : %s" % (len(REELS), sortie))
+# Le message du 402 et l'aide de la clé tels qu'à be03f22, avant la phase 1 bis.
+ancien_402 = 'raise UserError(_("Crédits Sirenic épuisés. Rechargez sur %s/compte.", base))\n'
+code, sortie = verifier(CLE, module=dict(REELS, **{CLIENT: REELS[CLIENT] + "\n" + ancien_402}))
+v(code == 1 and "sirenic_client.py" in sortie[0] and "recharge" in sortie[0],
+  "message qui invite à recharger, recharge fermée : refus (%s)" % sortie)
+code, sortie = verifier(CLE, module=dict(REELS, **{CLIENT: REELS[CLIENT] + "\n# Rechargez sur le compte.\n"}))
+v(code == 0, "le même mot dans un commentaire, que personne ne voit : pas de refus (%s)" % sortie)
+ancienne_aide = 'AIDE = ("Le module est gratuit ; les appels sont facturés "\n        "à l\'unité par Sirenic.")\n'
+code, sortie = verifier(CLE, module=dict(REELS, **{REGLAGES: REELS[REGLAGES] + "\n" + ancienne_aide}))
+v(code == 1 and "res_config_settings.py" in sortie[0] and "factur" in sortie[0],
+  "« facturés à l'unité », coupé entre deux chaînes : refus (%s)" % sortie)
+po = 'msgid "x"\nmsgstr "Crédits épuisés. "\n"Rechargez sur votre compte."\n'
+code, sortie = verifier(CLE, module=dict(REELS, **{"i18n/fr.po": po}))
+v(code == 1 and "fr.po" in sortie[0], "traduction .po qui invite à recharger : refus (%s)" % sortie)
+code, sortie = verifier(CLE, module=dict(REELS, **{CLIENT: REELS[CLIENT] + '\nN = _("120 appels offerts")\n'}))
+v(code == 1 and "120" in sortie[0], "texte du module qui écrit 120 appels : refus (%s)" % sortie)
+ouverte = dict(CLE, purchase=CLE["purchase"].replace(" Prepaid credits: card top-up is not open yet.", ""))
+fiche_ouverte = reelle.replace("leur recharge par carte n'est pas encore ouverte", "leur recharge par carte est ouverte")
+code, sortie = verifier(ouverte, fiche_ouverte, module=REELS)
+v(code == 1 and "sirenic/" in sortie[0] and "ne le dit plus" in sortie[0],
+  "recharge ouverte, le module dit le contraire : refus (%s)" % sortie)
 
 print("%d contrôles, %d en échec" % (ok + ko, ko))
 sys.exit(1 if ko else 0)

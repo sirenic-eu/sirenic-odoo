@@ -26,7 +26,7 @@ class SirenicVerification(models.TransientModel):
     )
     # Le prix est affiché AVANT l'appel : personne ne doit découvrir une
     # facturation après coup.
-    prix = fields.Char(compute="_compute_prix", string="Coût de cet appel")
+    prix = fields.Char(compute="_compute_prix", string="Prix de cet appel")
     resultat = fields.Text(readonly=True)
 
     @staticmethod

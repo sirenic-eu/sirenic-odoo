@@ -71,7 +71,12 @@ service peut contredire : « à partir de … € » (le prix de la saisie assis
 qu'aucune route du catalogue ne passe en dessous), et, contre
 `/.well-known/mcp.json` téléchargé en `mcp.json` comme les deux autres entrées,
 le nombre d'appels offerts par mois, la valeur d'un crédit et « leur recharge
-par carte n'est pas encore ouverte ».
+par carte n'est pas encore ouverte ». Les textes que le module montre (chaînes
+Python du manifeste, des messages et des aides, texte et attributs des vues XML,
+traductions `.po` s'il y en a ; pas les commentaires) passent les mêmes refus,
+fichier par fichier, et deux de plus : aucun ne parle de recharge hors de cette
+phrase tant que le service dit la recharge fermée, et aucun ne dit plus
+« facturé à l'unité », l'offre d'avant.
 
 `controler-module.py` vérifie le manifeste, la présence des fichiers déclarés, **l'ordre de
 chargement** (une action référencée avant d'être définie fait échouer

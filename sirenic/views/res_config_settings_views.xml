@@ -13,7 +13,7 @@
             </setting>
           </block>
           <block title="Votre accès" name="sirenic_acces">
-            <setting string="Clé d'API" help="Créez la vôtre sur api.sirenic.eu/compte. Le module est gratuit ; chaque appel est facturé à l'unité par Sirenic, et son coût est affiché avant que vous ne le lanciez.">
+            <setting string="Clé d'API" help="Créez la vôtre sur api.sirenic.eu/compte. Le module ne coûte rien. Un compte vérifié reçoit des appels offerts chaque mois sur les routes éligibles ; la grille (api.sirenic.eu/offres) dit lesquelles et donne le prix de chaque appel, que l'assistant « Autre vérification… » affiche avant de lancer. Au-delà, les appels se paieront à l'unité avec vos crédits prépayés ; leur recharge par carte n'est pas encore ouverte.">
               <field name="sirenic_api_key" password="True"/>
             </setting>
             <setting string="Adresse de l'API" help="À ne changer que sur instruction de Sirenic.">

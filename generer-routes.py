@@ -18,13 +18,24 @@ qu'aucune copie ne périme dans le dépôt :
                                            différence avec routes.py et la fiche
 
 --verifier lit aussi mcp.json (https://api.sirenic.eu/.well-known/mcp.json,
-téléchargé de même) : la fiche boutique y confronte ce qu'elle dit de l'offre
-(appels offerts par mois, valeur d'un crédit, recharge par carte).
+téléchargé de même) : la fiche boutique et les textes que le module montre
+(chaînes Python, vues XML, traductions) y confrontent ce qu'ils disent de l'offre
+(appels offerts par mois, valeur d'un crédit, recharge par carte), et aucun ne
+dit plus l'offre d'avant (« facturé à l'unité »).
 """
-import json, pathlib, re, sys
+import ast, json, pathlib, re, sys
+import xml.etree.ElementTree as ET
+from html import unescape
 
-SORTIE = pathlib.Path("sirenic/models/routes.py")
-FICHE = pathlib.Path("sirenic/static/description/index.html")
+MODULE = pathlib.Path("sirenic")
+SORTIE = MODULE / "models/routes.py"
+FICHE = MODULE / "static/description/index.html"
+
+# La recharge des crédits prépayés, aux mots du service (src/compte/achat-credits.ts de l'API,
+# RECHARGE_PAS_OUVERTE, que `purchase` de mcp.json sert en anglais). Tant qu'il sert la seconde,
+# un texte ne parle de recharge que par la première.
+RECHARGE_PAS_OUVERTE = "recharge par carte n'est pas encore ouverte"
+RECHARGE_PAS_OUVERTE_SERVI = "card top-up is not open yet"
 
 META = ("/v1/compte", "/v1/credits", "/v1/provenance", "/v1/usage", "/v1/demo",
         "/v1/reperer", "/v1/sante-api")
@@ -195,28 +206,77 @@ ROUTES = {
 ''' % (len(routes), exclues, corps)
 
 
-def verifier_offre(html, cle):
-    """Ce que la fiche dit de l'offre, contre payment.api_key_alternative de mcp.json.
+def verifier_offre(texte, cle, ou="fiche"):
+    """Ce qu'un texte dit de l'offre, contre payment.api_key_alternative de mcp.json.
 
-    Le texte de la fiche est celui que CDU a relu (lettre Q2 A du 20/10/2026) :
-    ce contrôle n'en écrit aucun mot, il refuse quand le service le contredit.
+    Le texte de la fiche est celui que CDU a relu (lettre Q2 A du 20/10/2026), et
+    ceux du module en reprennent les mots : ce contrôle n'en écrit aucun, il refuse
+    quand le service les contredit, ou quand ils disent encore l'offre d'avant.
     """
-    html = re.sub(r"\s+", " ", html)  # une phrase repliée sur deux lignes reste lue
+    # Les entités de la fiche lues comme le lecteur les voit ; une phrase repliée
+    # sur deux lignes, ou coupée entre deux chaînes Python, reste lue d'un tenant.
+    texte = re.sub(r"\s+", " ", unescape(texte)).replace("\u2019", "'")
     servi = re.match(r"([0-9]+) calls/month", cle.get("free_quota") or "")
     if not servi:
         raise Refus("mcp.json : quota gratuit illisible (free_quota : %r)" % (cle.get("free_quota") or "")[:120])
-    ecrits = set(re.findall(r"([0-9]+) appels", html))
+    ecrits = set(re.findall(r"([0-9]+) appels", texte))
     if ecrits - {servi.group(1)}:
-        raise Refus("fiche : %s appels offerts écrits, le service en sert %s par mois"
-                    % (", ".join(sorted(ecrits - {servi.group(1)})), servi.group(1)))
-    if "cr&#233;dit = " in html:
+        raise Refus("%s : %s appels offerts écrits, le service en sert %s par mois"
+                    % (ou, ", ".join(sorted(ecrits - {servi.group(1)})), servi.group(1)))
+    if "crédit = " in texte:
         unite = re.match(r"1 credit = ([0-9]+) EUR", cle.get("unit") or "")
-        if not unite or "1 cr&#233;dit = %s &#8364;" % unite.group(1) not in html:
-            raise Refus("fiche : « 1 crédit = 1 € », le service dit %r" % (cle.get("unit") or "")[:80])
-    if "recharge par carte n'est pas encore ouverte" in html:
-        if "card top-up is not open yet" not in (cle.get("purchase") or ""):
-            raise Refus("fiche : la recharge par carte « pas encore ouverte », le service ne le dit plus "
-                        "(purchase : %r)" % (cle.get("purchase") or "")[:160])
+        if not unite or "1 crédit = %s €" % unite.group(1) not in texte:
+            raise Refus("%s : « 1 crédit = 1 € », le service dit %r" % (ou, (cle.get("unit") or "")[:80]))
+    pas_ouverte = RECHARGE_PAS_OUVERTE_SERVI in (cle.get("purchase") or "")
+    if RECHARGE_PAS_OUVERTE in texte and not pas_ouverte:
+        raise Refus("%s : la recharge par carte « pas encore ouverte », le service ne le dit plus "
+                    "(purchase : %r)" % (ou, (cle.get("purchase") or "")[:160]))
+    # « Rechargez sur … » quand le service dit la recharge fermée : une promesse
+    # que l'utilisateur ne peut pas tenir (ancien message du 402 du module).
+    hors = len(re.findall(r"recharg", texte, re.I)) - texte.count(RECHARGE_PAS_OUVERTE)
+    if pas_ouverte and hors > 0:
+        raise Refus("%s : une recharge dite hors de « %s », alors que le service sert « %s »"
+                    % (ou, RECHARGE_PAS_OUVERTE, RECHARGE_PAS_OUVERTE_SERVI))
+    if re.search(r"factur\w*\s+(?:à|a)\s+l'unit", texte, re.I):
+        raise Refus("%s : « facturé à l'unité », l'offre d'avant ; le service sert des appels offerts "
+                    "chaque mois, puis les crédits prépayés" % ou)
+
+
+def textes_du_module():
+    """{fichier: texte} de ce que le module peut montrer, hors catalogue généré et fiche (relus à part).
+
+    Les chaînes Python (manifeste, messages d'erreur, aides des champs), le texte et
+    les attributs des vues XML, les traductions .po et .pot s'il y en a. Les
+    commentaires n'en sont pas : personne ne les voit dans Odoo.
+    """
+    textes = {}
+    for f in sorted(MODULE.rglob("*")):
+        if f in (SORTIE, FICHE) or "__pycache__" in f.parts:
+            continue
+        if f.suffix == ".py":
+            morceaux = [n.value for n in ast.walk(ast.parse(f.read_text(encoding="utf-8")))
+                        if isinstance(n, ast.Constant) and isinstance(n.value, str)]
+        elif f.suffix == ".xml":
+            morceaux = [t for el in ET.parse(f).iter() for t in (el.text, el.tail, *el.attrib.values()) if t]
+        elif f.suffix in (".po", ".pot"):
+            # msgid "…" "…" repliée sur plusieurs lignes : lue d'un tenant.
+            morceaux = [re.sub(r'"\s*\n\s*"', "", f.read_text(encoding="utf-8"))]
+        else:
+            continue
+        textes[str(f)] = "\n".join(morceaux)
+    return textes
+
+
+def verifier_textes_module(cle):
+    """Les textes du module disent l'offre servie : les refus de la fiche, fichier par fichier."""
+    fautes = []
+    for f, texte in textes_du_module().items():
+        try:
+            verifier_offre(texte, cle, f)
+        except Refus as e:
+            fautes.append(str(e))
+    if fautes:
+        raise Refus("%d texte(s) du module contre l'offre servie :\n  %s" % (len(fautes), "\n  ".join(fautes)))
 
 
 def verifier_fiche(spec, routes, mcp):
@@ -245,6 +305,7 @@ def main(argv):
         if "--verifier" in argv:
             mcp = json.loads(pathlib.Path("mcp.json").read_text(encoding="utf-8"))
             verifier_fiche(spec, routes, mcp)
+            verifier_textes_module((mcp.get("payment") or {}).get("api_key_alternative") or {})
             actuel = SORTIE.read_text(encoding="utf-8")
             if actuel != texte:
                 import difflib
@@ -252,7 +313,8 @@ def main(argv):
                     actuel.splitlines(True), texte.splitlines(True), str(SORTIE), "grille servie"))
                 raise Refus("%s n'est plus celui que donne la grille servie : relancer "
                             "python3 generer-routes.py et commiter" % SORTIE)
-            print("OK : %d routes, identiques à la grille servie ; fiche d'accord." % len(routes))
+            print("OK : %d routes, identiques à la grille servie ; fiche et textes du module d'accord."
+                  % len(routes))
             return 0
         SORTIE.write_text(texte, encoding="utf-8")
     except FileNotFoundError as e:

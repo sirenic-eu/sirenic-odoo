@@ -53,7 +53,13 @@ factures, vos montants, ni aucune donnée de votre base autre que
 l'identifiant contrôlé.
 
 Aucun appel n'est émis tant que vous n'avez pas coché le consentement dans
-Paramètres → Sirenic. Le module est gratuit ; les appels à l'API sont facturés
-à l'unité par Sirenic, avec votre propre clé.
+Paramètres → Sirenic.
+
+Gratuit, avec votre propre clé. Le module ne coûte rien et ne demande aucune
+clé d'activation. Un compte vérifié reçoit des appels offerts chaque mois sur
+les routes éligibles ; la grille (api.sirenic.eu/offres) dit lesquelles et donne
+le prix de chaque appel, que l'assistant « Autre vérification… » affiche avant
+de lancer. Au-delà, les appels se paieront à l'unité avec vos crédits
+prépayés ; leur recharge par carte n'est pas encore ouverte.
 """,
 }

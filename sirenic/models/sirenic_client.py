@@ -70,12 +70,28 @@ class SirenicClient(models.AbstractModel):
             _logger.warning("Sirenic injoignable sur %s", chemin)
             raise UserError(_("Sirenic est injoignable. Vérifiez votre connexion réseau."))
 
-        # 402 et 401 méritent un message qui dit QUOI FAIRE : ce sont les deux
-        # seuls cas où l'utilisateur peut agir lui-même.
+        # 401 et 402 méritent un message qui dit ce qui se passe et où regarder :
+        # ce sont les deux cas qui tiennent à la clé et au compte de l'utilisateur.
         if reponse.status_code == 401:
             raise UserError(_("Clé d'API Sirenic refusée. Vérifiez-la dans Paramètres → Sirenic."))
         if reponse.status_code == 402:
-            raise UserError(_("Crédits Sirenic épuisés. Rechargez sur %s/compte.", base))
+            # Avec une clé, le 402 vient du rail des crédits de l'API (src/compte/
+            # rail.ts, `credits_insuffisants`) : l'appel n'est entré ni dans les
+            # appels offerts ni dans le solde, et rien n'est débité. Ceux du mois
+            # sont utilisés, ou la route n'est pas éligible, ou (en-tête
+            # X-Free-Quota-Refused) ceux du jour, partagés par tous les comptes sur
+            # les routes qui appellent un modèle, le sont. La recharge par carte
+            # n'est pas ouverte (`purchase` de /.well-known/mcp.json) : le message
+            # n'y invite pas, et generer-routes.py --verifier le refuserait.
+            if reponse.headers.get("X-Free-Quota-Refused"):
+                pourquoi = _("ceux du jour sur cette route, partagés par tous les comptes, sont tous utilisés")
+            else:
+                pourquoi = _("ceux du mois sont tous utilisés, ou cette route n'en fait pas partie")
+            raise UserError(_(
+                "Cet appel n'a pas été servi et rien n'a été débité : il n'entre pas dans vos "
+                "appels offerts (%s) et votre solde de crédits ne le couvre pas.\n\n"
+                "Votre solde et vos appels offerts restants : %s/compte. Crédits prépayés : "
+                "leur recharge par carte n'est pas encore ouverte.", pourquoi, base))
         if reponse.status_code == 404:
             raise UserError(_("Sirenic ne connaît pas cet identifiant."))
         if reponse.status_code == 406:

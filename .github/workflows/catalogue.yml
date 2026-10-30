@@ -1,6 +1,7 @@
 # Le catalogue du module (sirenic/models/routes.py) est généré depuis la grille
 # servie par l'API ; la fiche boutique y est relue aussi : son « à partir de
-# … € » contre la grille, ce qu'elle dit de l'offre contre /.well-known/mcp.json.
+# … € » contre la grille, ce qu'elle dit de l'offre contre /.well-known/mcp.json,
+# comme ce qu'en disent les textes du module (messages, aides, vues).
 # Ce contrôle les confronte au service à chaque poussée et une fois par
 # semaine, parce que la dérive ne vient pas d'ici : elle vient d'une route
 # ajoutée ou changée côté API. Un rouge se répare en relançant le générateur
