@@ -166,6 +166,21 @@ code, sortie = verifier(dict(CLE, free_quota=CLE["free_quota"].replace("150", "1
 v(code == 1 and "149" in sortie[0], "quota servi changé (149) : refus (%s)" % sortie)
 code, sortie = verifier(dict(CLE, free_quota="free calls, see the price list"))
 v(code == 1, "quota servi illisible : refus (%s)" % sortie)
+# La phrase servie depuis kopko13/sirenic#330 (30/10/2026), relue le 19/11/2026 : le
+# quota du mois n'est plus en tête, et la phrase dit deux autres nombres qui ne
+# sont pas lui (le plafond du jour, les lignes du lot). Le contrôle la lisait
+# illisible : CI rouge chaque lundi depuis le 02/11 (kopko13/sirenic#188).
+CLE_1911 = dict(CLE, free_quota="With a verified account: 150 free calls a month up to EUR 2 of value on 122 of "
+                "129 routes (the price list says which), within a daily limit of 100 free calls shared by all "
+                "accounts on model-backed routes, and 100 free lines a month on /v1/identite/lot")
+code, sortie = verifier(CLE_1911)
+v(code == 0, "quota du mois derrière une condition (phrase servie du 19/11) : lu, d'accord (%s)" % sortie)
+code, sortie = verifier(dict(CLE_1911, free_quota=CLE_1911["free_quota"].replace("150", "149", 1)))
+v(code == 1 and "en sert 149 par mois" in sortie[0], "même phrase, quota du mois changé (149) : refus (%s)" % sortie)
+code, sortie = verifier(dict(CLE, free_quota="within a daily limit of 100 free calls shared by all accounts"))
+v(code == 1, "seul le plafond du jour, aucun quota du mois : refus (%s)" % sortie)
+code, sortie = verifier(dict(CLE, free_quota="150 free calls a month, then 200 free calls a month once verified"))
+v(code == 1, "deux quotas du mois différents : refus plutôt qu'un choix (%s)" % sortie)
 code, sortie = verifier(dict(CLE, unit="1 credit = 2 EUR, same per-call prices"))
 v(code == 1 and "cr" in sortie[0], "valeur du crédit changée : refus (%s)" % sortie)
 code, sortie = verifier(dict(CLE, purchase=CLE["purchase"].replace(" Prepaid credits: card top-up is not open yet.", "")))

@@ -206,6 +206,24 @@ ROUTES = {
 ''' % (len(routes), exclues, corps)
 
 
+def quota_du_mois(phrase):
+    """Le nombre d'appels offerts par mois que dit free_quota de mcp.json.
+
+    C'est le nombre devant « free calls a month », « calls/month » ou « calls per
+    month », où qu'il soit dans la phrase : le service l'a d'abord mis en tête
+    (« 150 calls/month on … »), puis derrière une condition (« With a verified
+    account: 150 free calls a month up to EUR 2 … », kopko13/sirenic#330,
+    30/10/2026), et la même phrase dit d'autres nombres qui ne sont pas lui (le
+    plafond du jour, « 100 free calls shared by all accounts », et « 100 free
+    lines a month » du lot). Aucun nombre du mois, ou deux différents : refus.
+    """
+    lus = set(re.findall(r"\b([0-9]+) (?:free )?calls(?: a | per |/)month\b", phrase))
+    if len(lus) != 1:
+        raise Refus("mcp.json : quota gratuit illisible (nombre(s) du mois lu(s) : %s ; free_quota : %r)"
+                    % (", ".join(sorted(lus)) or "aucun", phrase[:160]))
+    return lus.pop()
+
+
 def verifier_offre(texte, cle, ou="fiche"):
     """Ce qu'un texte dit de l'offre, contre payment.api_key_alternative de mcp.json.
 
@@ -216,13 +234,11 @@ def verifier_offre(texte, cle, ou="fiche"):
     # Les entités de la fiche lues comme le lecteur les voit ; une phrase repliée
     # sur deux lignes, ou coupée entre deux chaînes Python, reste lue d'un tenant.
     texte = re.sub(r"\s+", " ", unescape(texte)).replace("\u2019", "'")
-    servi = re.match(r"([0-9]+) calls/month", cle.get("free_quota") or "")
-    if not servi:
-        raise Refus("mcp.json : quota gratuit illisible (free_quota : %r)" % (cle.get("free_quota") or "")[:120])
+    servi = quota_du_mois(cle.get("free_quota") or "")
     ecrits = set(re.findall(r"([0-9]+) appels", texte))
-    if ecrits - {servi.group(1)}:
+    if ecrits - {servi}:
         raise Refus("%s : %s appels offerts écrits, le service en sert %s par mois"
-                    % (ou, ", ".join(sorted(ecrits - {servi.group(1)})), servi.group(1)))
+                    % (ou, ", ".join(sorted(ecrits - {servi})), servi))
     if "crédit = " in texte:
         unite = re.match(r"1 credit = ([0-9]+) EUR", cle.get("unit") or "")
         if not unite or "1 crédit = %s €" % unite.group(1) not in texte:
