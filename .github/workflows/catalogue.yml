@@ -32,3 +32,7 @@ jobs:
         run: python3 generer-routes.py --verifier
       - name: Contrôles statiques du module
         run: python3 controler-module.py
+      # Odoo et requests y sont remplacés par le strict nécessaire : la lecture
+      # de X-Credits-Charged et le texte de la trace, pas le chargement réel.
+      - name: Trace au fil contre le débit servi
+        run: python3 tester-trace.py

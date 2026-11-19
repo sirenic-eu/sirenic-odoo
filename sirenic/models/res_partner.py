@@ -85,8 +85,12 @@ class ResPartner(models.Model):
             corps = client.appeler("/v1/eu/facturation/dossier", {"pays": pays, "id": ident})
         return self._sirenic_afficher(corps)
 
-    def sirenic_appeler_route(self, code):
-        """Appelle une route du catalogue généré, sur ce partenaire."""
+    def sirenic_appeler_route(self, code, avec_debit=False):
+        """Appelle une route du catalogue généré, sur ce partenaire.
+
+        Rend le corps ; avec `avec_debit`, (corps, débit lu dans la réponse),
+        pour la trace au fil de l'assistant.
+        """
         self.ensure_one()
         route = ROUTES.get(code)
         if not route:
@@ -101,6 +105,8 @@ class ResPartner(models.Model):
                 raise UserError(_("Cette vérification demande un SIRET (14 chiffres), pas seulement un SIREN."))
             valeur = siret
         chemin = route["chemin"].replace("{%s}" % route["cle"], valeur)
+        if avec_debit:
+            return self.env["sirenic.client"].appeler_et_debit(chemin)
         return self.env["sirenic.client"].appeler(chemin)
 
     def _sirenic_afficher(self, corps, avertissement=None):

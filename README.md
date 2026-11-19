@@ -61,9 +61,10 @@ l'accueil de l'API, pas d'Odoo.
 python3 tester-generateur.py          # le générateur, sur une petite spec de forme servie
 python3 generer-routes.py --verifier  # routes.py et la fiche, contre la grille et l'offre servies
 python3 controler-module.py           # le module, statiquement
+python3 tester-trace.py               # la trace au fil dit le débit servi (X-Credits-Charged)
 ```
 
-Les trois tournent dans la CI publique du dépôt (`.github/workflows/catalogue.yml`),
+Les quatre tournent dans la CI publique du dépôt (`.github/workflows/catalogue.yml`),
 à chaque poussée et chaque lundi : la dérive ne vient pas d'ici, elle vient d'une
 route ajoutée ou changée côté API. `--verifier` régénère en mémoire, refuse
 toute différence avec `routes.py`, et relit ce que la fiche boutique dit que le

@@ -12,6 +12,7 @@ import json
 from odoo import _, api, fields, models
 
 from ..models.routes import ROUTES
+from ..models.sirenic_client import montant_euros
 
 
 class SirenicVerification(models.TransientModel):
@@ -41,11 +42,20 @@ class SirenicVerification(models.TransientModel):
 
     def action_verifier(self):
         self.ensure_one()
-        corps = self.partner_id.sirenic_appeler_route(self.route)
+        corps, debit = self.partner_id.sirenic_appeler_route(self.route, avec_debit=True)
         self.resultat = json.dumps(corps, indent=2, ensure_ascii=False)
         # Trace datée dans le fil : une vérification sans trace ne prouve rien
-        # le jour où il faut justifier une décision de paiement.
-        self.partner_id.message_post(
-            body=_("Sirenic, %s (%s)", (ROUTES[self.route]["libelle"]), ROUTES[self.route]["prix"]))
+        # le jour où il faut justifier une décision de paiement. Elle dit ce que
+        # l'API a débité (X-Credits-Charged), pas le prix de la grille : un appel
+        # couvert par les appels offerts du mois ne coûte rien
+        # (kopko13/sirenic#188). Sans débit lu, le prix de la grille, dit comme tel.
+        route = ROUTES[self.route]
+        if debit is None:
+            cout = _("%s à la grille, débit non lu", route["prix"])
+        elif debit == 0:
+            cout = _("appel offert, aucun débit")
+        else:
+            cout = _("débit de %s", montant_euros(debit))
+        self.partner_id.message_post(body=_("Sirenic, %s (%s)", route["libelle"], cout))
         return {"type": "ir.actions.act_window", "res_model": self._name,
                 "res_id": self.id, "view_mode": "form", "target": "new"}

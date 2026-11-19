@@ -7,6 +7,7 @@ nulle part ailleurs. Dupliquer un appel `requests` ailleurs dans le module
 contournerait les trois d'un coup.
 """
 import logging
+from decimal import Decimal, InvalidOperation
 
 import requests
 
@@ -19,6 +20,29 @@ _logger = logging.getLogger(__name__)
 # intelligence) dépassent la minute : elles ne sont volontairement PAS exposées
 # en action synchrone sur une fiche.
 DELAI_S = 30
+
+
+def debit_lu(reponse):
+    """Ce que l'API a débité pour cet appel, en crédits (un crédit vaut un euro).
+
+    L'en-tête X-Credits-Charged le dit sur chaque appel servi par clé : 0 quand
+    les appels offerts du mois l'ont couvert, le débit réel sinon. Absent ou
+    illisible, le débit n'est pas lu (None), jamais pris pour 0 : un appel payé
+    ne doit pas se lire offert.
+    """
+    brut = (reponse.headers.get("X-Credits-Charged") or "").strip()
+    try:
+        debit = Decimal(brut)
+    except InvalidOperation:
+        return None
+    return debit if debit.is_finite() and debit >= 0 else None
+
+
+def montant_euros(debit):
+    """« 0,12 € », « 0,50 € », « 0,002 € » : deux décimales au moins, comme la grille."""
+    texte = "{:f}".format(debit.normalize())
+    entier, _sep, decimales = texte.partition(".")
+    return "%s,%s €" % (entier, decimales.ljust(2, "0"))
 
 
 class SirenicClient(models.AbstractModel):
@@ -34,7 +58,16 @@ class SirenicClient(models.AbstractModel):
         )
 
     def appeler(self, chemin, params=None):
-        """Rend le corps JSON, ou lève un UserError lisible.
+        """Rend le corps JSON, ou lève un UserError lisible."""
+        return self._reponse(chemin, params).json()
+
+    def appeler_et_debit(self, chemin, params=None):
+        """(corps JSON, débit lu par debit_lu) : pour une trace qui dit ce que l'appel a coûté."""
+        reponse = self._reponse(chemin, params)
+        return reponse.json(), debit_lu(reponse)
+
+    def _reponse(self, chemin, params=None):
+        """La réponse servie (2xx), ou un UserError lisible.
 
         ⚠️ LA GARDE DE CONSENTEMENT EST ICI, pas dans les vues. Les règles
         éditeurs d'Odoo exigent un opt-in AVANT toute transmission ; une garde
@@ -100,4 +133,4 @@ class SirenicClient(models.AbstractModel):
             raise UserError(_("La source officielle est temporairement indisponible. Réessayez plus tard."))
         if reponse.status_code >= 400:
             raise UserError(_("Sirenic a répondu %s.", reponse.status_code))
-        return reponse.json()
+        return reponse
